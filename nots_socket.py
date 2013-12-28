@@ -1,7 +1,10 @@
 #!/usr/bin/env python2
  
 
-import sys, socket
+import sys, socket, time
+
+sleep_time = 1
+file_to_save = ""
 
 class mysocket:
 
@@ -78,12 +81,18 @@ def nums_only(string):
 	return nstr
 
 def extract_numbers(string):
+	if type(string) != str:
+		return False
 	t = string.split(" ")
 	if t[0] != "Nope,":
 		return False
 	sys.stdout.flush()
 	return nums_only(t[8])
 
+def append_to_file(toappend):
+	f = open(file_to_save, "a")
+	f.write(toappend+"\n")
+	f.close()
 
 
 if __name__ == "__main__":
@@ -98,10 +107,13 @@ if __name__ == "__main__":
 		#print connection.comunicate()
 		connection.comunicate()
 		while True:
-			rep = connection.comunicate("")
+			rep = extract_numbers(connection.comunicate(""))
 			if rep == False:
 				print "error comunicating"
 				break
-			print extract_numbers(connection.comunicate("")) 
+			append_to_file(rep)
+			print  rep
+			time.sleep(sleep_time)
+		
 	else:
 		print "no connection, start server first" 
